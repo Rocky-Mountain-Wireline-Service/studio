@@ -1,11 +1,50 @@
 {
+  // RMWS brand chrome. The shared red title bar marks these three windows as
+  // one project; the status bar colour says which repo you are in, so a command
+  // is never run against the wrong one.
+  //
+  // Foregrounds are chosen for contrast, not for brand fidelity: white on the
+  // gold and periwinkle accents measured under 2.3:1, which is unreadable.
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#710a0c",
     "titleBar.activeForeground": "#ffffff",
-    "titleBar.inactiveBackground": "#141826",
-    "titleBar.inactiveForeground": "#d1d5db",
+    "titleBar.inactiveBackground": "#4c0708",
+    "titleBar.inactiveForeground": "#e5e7eb",
     "statusBar.background": "#b8b8d1",
-    "statusBar.foreground": "#ffffff",
-    "statusBar.noFolderBackground": "#141826"
+    "statusBar.foreground": "#1a1a1a",
+    "statusBar.noFolderBackground": "#b8b8d1",
+    "statusBarItem.hoverBackground": "#00000022",
+    "statusBarItem.remoteBackground": "#b8b8d1",
+    "statusBarItem.remoteForeground": "#1a1a1a",
+    "activityBarBadge.background": "#710a0c",
+    "activityBarBadge.foreground": "#ffffff"
+  },
+
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // pnpm is the package manager for all three repos; npm lockfiles were removed
+  // so Netlify and local installs cannot resolve different trees.
+  "npm.packageManager": "pnpm",
+
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.vite-ssg-temp": true,
+    "**/pnpm-lock.yaml": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.vite-ssg-temp/**": true
   }
 }
