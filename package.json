@@ -9,7 +9,9 @@
     "deploy": "sanity deploy",
     "migrate": "sanity exec scripts/migrate-legacy.ts --with-user-token",
     "migrate:write": "MIGRATE_WRITE=1 sanity exec scripts/migrate-legacy.ts --with-user-token",
-    "migrate:purge": "MIGRATE_WRITE=1 MIGRATE_PURGE=1 sanity exec scripts/migrate-legacy.ts --with-user-token"
+    "migrate:purge": "MIGRATE_WRITE=1 MIGRATE_PURGE=1 sanity exec scripts/migrate-legacy.ts --with-user-token",
+    "design:content": "sanity exec scripts/apply-design-content.ts --with-user-token",
+    "design:write": "DESIGN_WRITE=1 sanity exec scripts/apply-design-content.ts --with-user-token"
   },
   "dependencies": {
     "sanity": "^5.25.1",

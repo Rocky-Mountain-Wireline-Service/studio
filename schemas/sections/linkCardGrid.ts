@@ -11,10 +11,25 @@ import { defineType, defineField } from 'sanity';
  */
 export default defineType({
   name: 'linkCardGrid',
-  title: 'Link Card Grid',
+  title: 'Content Rows',
   type: 'object',
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
+    defineField({
+      name: 'layout',
+      title: 'Layout',
+      description:
+        'Alternating rows suit a few entries with real copy — the image changes sides as you read down. Cards suit many short entries.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Alternating rows', value: 'rows' },
+          { title: 'Cards', value: 'cards' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'rows',
+    }),
     defineField({
       name: 'cards',
       title: 'Cards',
@@ -57,8 +72,8 @@ export default defineType({
     prepare({ heading, cards }: any) {
       const count = cards?.length ?? 0;
       return {
-        title: heading || 'Link Card Grid',
-        subtitle: `Link cards — ${count} card${count === 1 ? '' : 's'}`,
+        title: heading || 'Content Rows',
+        subtitle: `${count} entr${count === 1 ? 'y' : 'ies'}`,
       };
     },
   },

@@ -30,7 +30,14 @@ export default defineType({
     }),
     defineField({
       name: 'cta',
-      title: 'Call-to-action button',
+      title: 'Primary button',
+      description: 'The main action — e.g. "Get a quote".',
+      type: 'link',
+    }),
+    defineField({
+      name: 'secondaryCta',
+      title: 'Secondary button',
+      description: 'Optional second action shown beside the first — e.g. "Work with us".',
       type: 'link',
     }),
   ],

@@ -83,6 +83,34 @@ const links = (prefix: string, items: { pagename?: string; pagelink?: string }[]
       .map((l) => ({ _type: 'link', label: l.pagename!, href: remapUrl(l.pagelink!) }))
   );
 
+/**
+ * A card summary derived from the service's own body copy.
+ *
+ * The legacy schema had no summary field, so the services index rendered as
+ * bare image-and-title cards with nothing to tell a visitor what the service
+ * is. This also feeds the meta description when Search & Social is left blank,
+ * so an empty summary costs a search snippet too.
+ *
+ * Cut on a sentence boundary where there is one in range, otherwise on a word
+ * boundary — never mid-word.
+ */
+function summarise(blocks: Block[] | undefined, limit = 170): string | undefined {
+  if (!Array.isArray(blocks)) return undefined;
+  const text = blocks
+    .filter((b: any) => b._type === 'block')
+    .flatMap((b: any) => (b.children ?? []).map((c: any) => c.text ?? ''))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!text) return undefined;
+  if (text.length <= limit) return text;
+
+  const window = text.slice(0, limit);
+  const sentenceEnd = Math.max(window.lastIndexOf('. '), window.lastIndexOf('! '), window.lastIndexOf('? '));
+  if (sentenceEnd > limit * 0.5) return window.slice(0, sentenceEnd + 1).trim();
+  return `${window.slice(0, window.lastIndexOf(' ')).trim()}…`;
+}
+
 // ─── Transforms ──────────────────────────────────────────────────────────────
 
 function buildHome(src: Doc): Doc {
@@ -93,12 +121,17 @@ function buildHome(src: Doc): Doc {
       heading: src.welcome,
       intro: hasBlocks(src.message) ? src.message : undefined,
       image: figure(src.image, src.headeralt, 'homepage hero'),
+      // Both buttons were hardcoded in the Gatsby markup, so they never existed
+      // as content the client could change. They do now.
+      cta: { _type: 'link', label: 'Get a Quote', href: '/contact' },
+      secondaryCta: { _type: 'link', label: 'Work With Us', href: '/employment' },
     }))
   );
 
   if (src.services?.length) {
     sections.push(
       section('linkCardGrid', 'cards', {
+        layout: 'rows',
         cards: keyed(
           'card',
           src.services.map((s: Doc, i: number) =>
@@ -279,6 +312,7 @@ function buildServicePage(src: Doc): Doc {
     title: src.title,
     slug: src.slug,
     image: figure(src.image, src.headeralt, `service ${src.slug.current}`),
+    summary: summarise(src.content),
     content: hasBlocks(src.content) ? src.content : undefined,
   });
 }
@@ -465,6 +499,41 @@ async function uploadTrustedByLogos(write: boolean) {
   return section('logoStrip', 'trustedby', { heading: 'Trusted By', logos: keyed('logo', logos) });
 }
 
+/**
+ * Social profiles and the health-plan transparency link.
+ *
+ * All three were hardcoded in the Gatsby footer rather than stored as content,
+ * so changing a profile URL meant a code change and a deploy. The MRF link is a
+ * compliance requirement under the Transparency in Coverage Rule, which makes
+ * it exactly the kind of thing that must not depend on a developer being
+ * available.
+ */
+const SOCIAL_LINKS = {
+  _id: 'socialLinks',
+  _type: 'socialLinks',
+  links: [
+    {
+      _key: 'facebook',
+      _type: 'socialLink',
+      platform: 'facebook',
+      url: 'https://www.facebook.com/pages/Rocky-Mountain-Wireline-Service/104363879630844',
+    },
+    {
+      _key: 'linkedin',
+      _type: 'socialLink',
+      platform: 'linkedin',
+      url: 'https://www.linkedin.com/company/rocky-mountain-wireline-svc/',
+    },
+  ],
+};
+
+const MRF_LINK = {
+  _type: 'link',
+  label: 'MRFs for Transparency in Coverage Rule',
+  href: 'https://www.cigna.com/legal/compliance/machine-readable-files',
+  isExternal: true,
+};
+
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -547,7 +616,13 @@ async function main() {
   docs.push(
     { _id: 'nav-main', _type: 'navigation', navType: 'main', items: links('main', nav.pagelinks) },
     { _id: 'nav-footer', _type: 'navigation', navType: 'footer', items: links('footer', footer.links) },
-    { _id: 'nav-legal', _type: 'navigation', navType: 'legal', items: links('legal', footer.privterms) }
+    {
+      _id: 'nav-legal',
+      _type: 'navigation',
+      navType: 'legal',
+      items: [...links('legal', footer.privterms), { _key: 'legal-mrf', ...MRF_LINK }],
+    },
+    SOCIAL_LINKS
   );
 
   docs.push(
