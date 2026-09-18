@@ -347,6 +347,74 @@ const employmentForm = {
   ],
 };
 
+// ─── Search copy ─────────────────────────────────────────────────────────────
+
+/**
+ * Starting search titles and descriptions, carried over from the migration
+ * brief where they were researched against Google's truncation points.
+ *
+ * These seed the Search & Social tab so the client inherits usable copy instead
+ * of empty fields; from here on the CMS is the source of truth and editing them
+ * no longer needs a deploy. Descriptions run 109-152 characters.
+ */
+const PAGE_SEO: Record<string, { title: string; description: string }> = {
+  'page-home': {
+    title: 'Wireline Services',
+    description:
+      'Rocky Mountain Wireline Service has set the standard in wireline services since 1988. Find a location near you and request a quote.',
+  },
+  'page-about': {
+    title: 'About Us',
+    description:
+      'Providing quality service since 1988 and rivaled by no other competitor. Read the mission and vision behind Rocky Mountain Wireline Service.',
+  },
+  'page-services': {
+    title: 'Services',
+    description:
+      'Explore the wireline services RMWS provides, delivered by experienced crews through outstanding customer service and constant technological advancement.',
+  },
+  'page-equipment': {
+    title: 'Equipment',
+    description:
+      'See the equipment behind Rocky Mountain Wireline Service, trusted by ISN, PEC, and SafeLand USA. Request a quote for your next job.',
+  },
+  'page-safety': {
+    title: 'Safety',
+    description:
+      'Committed to safety both off and on the work site, RMWS delivers safe and efficient wireline services and products on every job.',
+  },
+  'page-employment': {
+    title: 'Employment',
+    description:
+      'Work with the best. Apply to join the Rocky Mountain Wireline Service team and tell us which branch location and position you are after.',
+  },
+  'page-contact': {
+    title: 'Contact Us',
+    description:
+      'Get in touch with Rocky Mountain Wireline Service. Request a quote, reach the branch nearest you, or send us a message and we will follow up.',
+  },
+  'legal-privacy-policy': {
+    title: 'Privacy Policy',
+    description:
+      'How Rocky Mountain Wireline Service collects, uses, and protects the information you share with us through this site.',
+  },
+  'legal-terms-conditions': {
+    title: 'Terms & Conditions',
+    description:
+      'The terms and conditions that govern your use of the Rocky Mountain Wireline Service website and its content.',
+  },
+};
+
+const TAGLINE =
+  'RMWS is committed to perpetuating our standard of excellence through outstanding customer service and constant technological advancement.';
+
+/** Attach seed search copy to a document, leaving any the client has written alone. */
+function withSeo(doc: Doc): Doc {
+  const seed = PAGE_SEO[doc._id];
+  if (!seed) return doc;
+  return { ...doc, seo: { _type: 'seo', title: seed.title, description: seed.description } };
+}
+
 // ─── Accreditation logos ─────────────────────────────────────────────────────
 
 /**
@@ -448,7 +516,7 @@ async function main() {
 
   const trustedBy = await uploadTrustedByLogos(WRITE);
 
-  docs.push(
+  const pages = [
     buildHome(legacy.homepage),
     buildAbout(legacy.about),
     buildServices(legacy.servicespage, orderedIds.length ? orderedIds : services.map((s: Doc) => s._id)),
@@ -469,9 +537,9 @@ async function main() {
     buildContact(legacy.contactpage),
     buildLegal(legacy.privacyPolicy, 'legal-privacy-policy', '/privacy-policy'),
     buildLegal(legacy.termsConditions, 'legal-terms-conditions', '/terms-and-conditions'),
-    contactForm,
-    employmentForm
-  );
+  ];
+
+  docs.push(...pages.map(withSeo), contactForm, employmentForm);
 
   // Navigation — three link sets, each its own document.
   const nav = legacy.navigation;
@@ -487,6 +555,11 @@ async function main() {
       _id: 'siteSettings',
       _type: 'siteSettings',
       siteName: footer.businessname,
+      tagline: TAGLINE,
+      defaultSeo: {
+        _type: 'seo',
+        description: PAGE_SEO['page-home']!.description,
+      },
       logo: figure(nav.navlogo, nav.mainalt, 'site logo'),
       mobileLogo: figure(nav.mobilelogo, nav.mobilealt, 'mobile logo'),
       footerLogo: figure(footer.footerlogo, footer.logoalt, 'footer logo'),
