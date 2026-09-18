@@ -1,0 +1,24 @@
+{
+  "name": "pws-studio-template",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "sanity": "^5.25.1",
+    "@sanity/vision": "^5.25.1",
+    "react": "^19.2.2",
+    "react-dom": "^19.2.2",
+    "styled-components": "^6.1.15",
+    "react-icons": "^5.4.0",
+    "sanity-plugin-icon-picker": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.0",
+    "@types/react": "^19.0.0",
+    "dotenv": "^16.4.0"
+  }
+}
