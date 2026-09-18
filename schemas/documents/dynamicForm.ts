@@ -39,7 +39,7 @@ export default defineType({
             title: 'Field Type',
             type: 'string',
             options: {
-              list: ['text', 'email', 'phone', 'number', 'date', 'select', 'checkbox', 'checkbox-group', 'textarea', 'file'],
+              list: ['text', 'email', 'phone', 'number', 'date', 'select', 'checkbox', 'checkbox-group', 'textarea', 'radio', 'file'],
             },
           }),
           defineField({ name: 'required', title: 'Required', type: 'boolean', initialValue: false }),
