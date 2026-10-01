@@ -40,6 +40,19 @@ const PATCHES: Patch[] = [
     },
   },
   {
+    id: 'siteSettings',
+    label: 'Header button',
+    // "Request a Quote" overstated what the button does — it opens a contact
+    // form, not a quoting tool. The anchor lands on the form itself.
+    set: {
+      headerCta: {
+        _type: 'link',
+        label: 'Contact Sales',
+        href: '/contact#contact-form',
+      },
+    },
+  },
+  {
     id: 'page-home',
     label: 'Homepage content layout',
     // These entries carry several paragraphs each; alternating rows is the live
@@ -58,6 +71,10 @@ const SECTION_ORDER: Record<string, string[]> = {
   // Locations sit directly under the hero on the live site: a visitor looking
   // for their nearest branch should not have to scroll the whole page first.
   'page-home': ['hero', 'locations', 'cards'],
+  // The form is why most people open this page, so it leads. The one-line
+  // intro that used to sit above it moves into the form's own intro field
+  // rather than being repeated as a separate block.
+  'page-contact': ['hero', 'form', 'cards', 'staff', 'body'],
 };
 
 /**
@@ -99,6 +116,32 @@ async function backfillServiceSummaries(write: boolean) {
  * Social profiles and the transparency-in-coverage link, neither of which the
  * legacy dataset held — both were hardcoded in the Gatsby footer.
  */
+/**
+ * Moves the contact page's standalone intro line into the form it introduces,
+ * then drops the now-duplicated block. Skipped once the form already has an
+ * intro, so it cannot clobber copy written in the Studio.
+ */
+async function foldContactIntro(write: boolean) {
+  const page = await client.fetch<{ sections?: any[] }>(
+    `*[_id == "page-contact"][0]{ sections }`
+  );
+  if (!page?.sections) return;
+
+  const body = page.sections.find((s) => s._key === 'body' && s._type === 'bodyContent');
+  const form = page.sections.find((s) => s._key === 'form' && s._type === 'formSection');
+
+  if (!body || !form) { console.log('  page-contact: nothing to fold'); return; }
+  if (form.intro?.length) { console.log('  page-contact: form already has an intro — left alone'); return; }
+  if (!body.body?.length) { console.log('  page-contact: intro block is empty'); return; }
+
+  const sections = page.sections
+    .filter((s) => s._key !== 'body')
+    .map((s) => (s._key === 'form' ? { ...s, intro: body.body } : s));
+
+  console.log('  page-contact: intro folded into the form, standalone block removed');
+  if (write) await client.patch('page-contact').set({ sections }).commit();
+}
+
 async function addFooterLinks(write: boolean) {
   const social = {
     _id: 'socialLinks',
@@ -186,6 +229,7 @@ async function main() {
   await reorderSections(WRITE);
   await backfillServiceSummaries(WRITE);
   await addFooterLinks(WRITE);
+  await foldContactIntro(WRITE);
 
   console.log(WRITE ? `\nApplied changes to "${dataset}".\n` : '\nDry run. Nothing written.\n');
 }

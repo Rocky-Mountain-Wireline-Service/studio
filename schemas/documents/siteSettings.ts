@@ -40,22 +40,34 @@ export default defineType({
       group: 'identity',
     }),
     defineField({
+      name: 'headerCta',
+      title: 'Header button',
+      description:
+        'The button at the top right of every page. Point it at /contact#contact-form to land on the contact form itself.',
+      type: 'link',
+      group: 'identity',
+    }),
+    defineField({
       name: 'logo',
       title: 'Primary logo',
+      description:
+        'Shown in the site header. A wide, horizontal version works best here — the header is only about 40px tall.',
       type: 'figure',
       group: 'logos',
     }),
     defineField({
       name: 'mobileLogo',
       title: 'Compact logo',
-      description: 'Optional. Used in the mobile header where the full logo will not fit.',
+      description:
+        'Optional. Used in the mobile header, where a wide logo becomes unreadably small. A square or stacked mark works best.',
       type: 'figure',
       group: 'logos',
     }),
     defineField({
       name: 'footerLogo',
       title: 'Footer logo',
-      description: 'Optional. Falls back to the primary logo.',
+      description:
+        'Optional — falls back to the primary logo. The footer is dark, so a light or reversed version reads best here.',
       type: 'figure',
       group: 'logos',
     }),
