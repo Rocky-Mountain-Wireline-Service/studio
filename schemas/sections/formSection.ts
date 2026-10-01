@@ -20,6 +20,21 @@ export default defineType({
       of: [{ type: 'block' }],
     }),
     defineField({
+      name: 'tone',
+      title: 'Appearance',
+      description:
+        'Brand suits a short, high-intent form like a sales enquiry, where the colour carries weight. Light suits a long one like a job application, where a calmer ground is easier to work through.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Brand (red card)', value: 'brand' },
+          { title: 'Light (white card)', value: 'light' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'brand',
+    }),
+    defineField({
       name: 'form',
       title: 'Which form',
       type: 'reference',

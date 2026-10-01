@@ -40,6 +40,14 @@ const PATCHES: Patch[] = [
     },
   },
   {
+    id: 'page-employment',
+    label: 'Application form appearance',
+    // A thirteen-field application is a task to work through rather than a
+    // moment to convert, so it takes the light card. The short sales enquiry
+    // keeps the brand red.
+    set: { 'sections[_key=="form"].tone': 'light' },
+  },
+  {
     id: 'siteSettings',
     label: 'Header button',
     // "Request a Quote" overstated what the button does — it opens a contact
@@ -165,25 +173,38 @@ async function addContactMap(write: boolean) {
   if (write) await client.patch('page-contact').set({ sections: [...page.sections, map] }).commit();
 }
 
-async function foldContactIntro(write: boolean) {
-  const page = await client.fetch<{ sections?: any[] }>(
-    `*[_id == "page-contact"][0]{ sections }`
-  );
-  if (!page?.sections) return;
+/**
+ * Moves a page's standalone intro line into the form it introduces, then drops
+ * the now-duplicated block.
+ *
+ * On both of these pages the line is instructions for the form — "Feel free to
+ * contact us", "If you have a resume please upload it here" — but sat in its
+ * own section above it, separated by a section boundary and a change of
+ * background. One sentence alone on a full-width band reads as an empty page
+ * rather than as a caption for what follows.
+ *
+ * Skipped once the form already has an intro, so it cannot clobber copy
+ * written in the Studio.
+ */
+async function foldFormIntros(write: boolean) {
+  for (const id of ['page-contact', 'page-employment']) {
+    const page = await client.fetch<{ sections?: any[] }>(`*[_id == $id][0]{ sections }`, { id });
+    if (!page?.sections) continue;
 
-  const body = page.sections.find((s) => s._key === 'body' && s._type === 'bodyContent');
-  const form = page.sections.find((s) => s._key === 'form' && s._type === 'formSection');
+    const body = page.sections.find((s) => s._key === 'body' && s._type === 'bodyContent');
+    const form = page.sections.find((s) => s._key === 'form' && s._type === 'formSection');
 
-  if (!body || !form) { console.log('  page-contact: nothing to fold'); return; }
-  if (form.intro?.length) { console.log('  page-contact: form already has an intro — left alone'); return; }
-  if (!body.body?.length) { console.log('  page-contact: intro block is empty'); return; }
+    if (!body || !form) { console.log(`  ${id}: nothing to fold`); continue; }
+    if (form.intro?.length) { console.log(`  ${id}: form already has an intro — left alone`); continue; }
+    if (!body.body?.length) { console.log(`  ${id}: intro block is empty`); continue; }
 
-  const sections = page.sections
-    .filter((s) => s._key !== 'body')
-    .map((s) => (s._key === 'form' ? { ...s, intro: body.body } : s));
+    const sections = page.sections
+      .filter((s) => s._key !== 'body')
+      .map((s) => (s._key === 'form' ? { ...s, intro: body.body } : s));
 
-  console.log('  page-contact: intro folded into the form, standalone block removed');
-  if (write) await client.patch('page-contact').set({ sections }).commit();
+    console.log(`  ${id}: intro folded into the form, standalone block removed`);
+    if (write) await client.patch(id).set({ sections }).commit();
+  }
 }
 
 /**
@@ -326,7 +347,7 @@ async function main() {
   await backfillServiceSummaries(WRITE);
   await addFooterLinks(WRITE);
   await setFieldWidths(WRITE);
-  await foldContactIntro(WRITE);
+  await foldFormIntros(WRITE);
   await addContactMap(WRITE);
 
   console.log(WRITE ? `\nApplied changes to "${dataset}".\n` : '\nDry run. Nothing written.\n');
