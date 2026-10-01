@@ -8,6 +8,7 @@ import logoStrip from './logoStrip';
 import contactCards from './contactCards';
 import staffDirectory from './staffDirectory';
 import formSection from './formSection';
+import mapEmbed from './mapEmbed';
 
 /** Every section type, in the order they appear in the "Add section" menu. */
 export const sectionTypes = [
@@ -21,6 +22,7 @@ export const sectionTypes = [
   contactCards,
   staffDirectory,
   formSection,
+  mapEmbed,
 ];
 
 /** Names only — `page.sections` uses these to build its `of` array. */

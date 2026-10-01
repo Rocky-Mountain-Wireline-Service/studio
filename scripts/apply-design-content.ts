@@ -74,7 +74,7 @@ const SECTION_ORDER: Record<string, string[]> = {
   // The form is why most people open this page, so it leads. The one-line
   // intro that used to sit above it moves into the form's own intro field
   // rather than being repeated as a separate block.
-  'page-contact': ['hero', 'form', 'cards', 'staff', 'body'],
+  'page-contact': ['hero', 'form', 'cards', 'staff', 'map'],
 };
 
 /**
@@ -121,6 +121,36 @@ async function backfillServiceSummaries(write: boolean) {
  * then drops the now-duplicated block. Skipped once the form already has an
  * intro, so it cannot clobber copy written in the Studio.
  */
+/**
+ * Adds the office map to the foot of the contact page.
+ *
+ * Uses the keyless `output=embed` form rather than the Maps Embed API, so the
+ * site carries no API key, no billing account and nothing to rotate — the map
+ * is static and public, which is all this needs to be.
+ */
+async function addContactMap(write: boolean) {
+  const ADDRESS = '2144 Hwy 6 & 50\nGrand Junction, CO 81505';
+  const map = {
+    _key: 'map',
+    _type: 'mapEmbed',
+    heading: 'Find Us',
+    embedUrl: `https://maps.google.com/maps?q=${encodeURIComponent('2144 Hwy 6 & 50, Grand Junction, CO 81505')}&z=14&output=embed`,
+    label: 'Map showing the Rocky Mountain Wireline Service office in Grand Junction, Colorado',
+    address: ADDRESS,
+    height: 'medium',
+  };
+
+  const page = await client.fetch<{ sections?: any[] }>(`*[_id == "page-contact"][0]{ sections }`);
+  if (!page?.sections) { console.log('  page-contact not found'); return; }
+  if (page.sections.some((s) => s._key === 'map')) {
+    console.log('  page-contact already has the map');
+    return;
+  }
+
+  console.log('  page-contact += map at the foot of the page');
+  if (write) await client.patch('page-contact').set({ sections: [...page.sections, map] }).commit();
+}
+
 async function foldContactIntro(write: boolean) {
   const page = await client.fetch<{ sections?: any[] }>(
     `*[_id == "page-contact"][0]{ sections }`
@@ -230,6 +260,7 @@ async function main() {
   await backfillServiceSummaries(WRITE);
   await addFooterLinks(WRITE);
   await foldContactIntro(WRITE);
+  await addContactMap(WRITE);
 
   console.log(WRITE ? `\nApplied changes to "${dataset}".\n` : '\nDry run. Nothing written.\n');
 }
