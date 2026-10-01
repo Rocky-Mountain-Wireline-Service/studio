@@ -53,14 +53,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'address',
-      title: 'Address shown beneath the map',
-      description:
-        'Optional. Also used for the "open in maps" link, which is how someone gets directions on a phone.',
-      type: 'text',
-      rows: 2,
-    }),
-    defineField({
       name: 'height',
       title: 'Map height',
       type: 'string',
