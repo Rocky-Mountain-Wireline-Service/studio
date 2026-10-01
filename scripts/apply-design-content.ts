@@ -124,9 +124,11 @@ async function backfillServiceSummaries(write: boolean) {
 /**
  * Adds the office map to the foot of the contact page.
  *
- * Uses the keyless `output=embed` form rather than the Maps Embed API, so the
- * site carries no API key, no billing account and nothing to rotate — the map
- * is static and public, which is all this needs to be.
+ * Reuses the exact embed the previous site used, taken from Google Maps'
+ * Share -> Embed a map panel. That form pins the business's own listing rather
+ * than running a text search for the address, so the map shows the RMWS place
+ * marker with its name. It also needs no API key, billing account or anything
+ * to rotate.
  */
 async function addContactMap(write: boolean) {
   const ADDRESS = '2144 Hwy 6 & 50\nGrand Junction, CO 81505';
@@ -134,7 +136,8 @@ async function addContactMap(write: boolean) {
     _key: 'map',
     _type: 'mapEmbed',
     heading: 'Find Us',
-    embedUrl: `https://maps.google.com/maps?q=${encodeURIComponent('2144 Hwy 6 & 50, Grand Junction, CO 81505')}&z=14&output=embed`,
+    embedUrl:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3095.52232083304!2d-108.65932904879496!3d39.117344141453245!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8746fd7c724cf171%3A0x618cc3fb2759c091!2sRocky%20Mountain%20Wireline%20Service!5e0!3m2!1sen!2sus!4v1666026542279!5m2!1sen!2sus',
     label: 'Map showing the Rocky Mountain Wireline Service office in Grand Junction, Colorado',
     address: ADDRESS,
     height: 'medium',
@@ -142,8 +145,19 @@ async function addContactMap(write: boolean) {
 
   const page = await client.fetch<{ sections?: any[] }>(`*[_id == "page-contact"][0]{ sections }`);
   if (!page?.sections) { console.log('  page-contact not found'); return; }
-  if (page.sections.some((s) => s._key === 'map')) {
-    console.log('  page-contact already has the map');
+  const existing = page.sections.find((s) => s._key === 'map');
+  if (existing) {
+    if (existing.embedUrl === map.embedUrl) {
+      console.log('  page-contact map already correct');
+      return;
+    }
+    console.log('  page-contact map embed updated to the business listing');
+    if (write) {
+      await client
+        .patch('page-contact')
+        .set({ sections: page.sections.map((s) => (s._key === 'map' ? { ...s, ...map } : s)) })
+        .commit();
+    }
     return;
   }
 
