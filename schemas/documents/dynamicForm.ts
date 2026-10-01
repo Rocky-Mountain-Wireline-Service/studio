@@ -44,6 +44,22 @@ export default defineType({
           }),
           defineField({ name: 'required', title: 'Required', type: 'boolean', initialValue: false }),
           defineField({
+            name: 'width',
+            title: 'Field width',
+            description:
+              'Lets short fields share a row. A ZIP code beside City and State reads better than three full-width boxes, and keeps a long form from becoming a long scroll. Always full width on phones.',
+            type: 'string',
+            options: {
+              list: [
+                { title: 'Full width', value: 'full' },
+                { title: 'Half width', value: 'half' },
+                { title: 'Third width', value: 'third' },
+              ],
+              layout: 'radio',
+            },
+            initialValue: 'full',
+          }),
+          defineField({
             name: 'options',
             title: 'Options (for select/checkbox-group)',
             type: 'array',

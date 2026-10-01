@@ -186,6 +186,58 @@ async function foldContactIntro(write: boolean) {
   if (write) await client.patch('page-contact').set({ sections }).commit();
 }
 
+/**
+ * Lets short fields share a row. Thirteen full-width boxes in one column is a
+ * long scroll and reads as a wall; City, State and ZIP in particular waste a
+ * full row each. Only applied where a field has no width set, so a choice made
+ * in the Studio is never overwritten.
+ */
+/**
+ * Field order and width together, because the two cannot be chosen separately:
+ * the grid fills row by row, so a half-width field followed by a third-width
+ * one leaves a gap and pushes everything after it out of alignment. Each row
+ * below adds up to a whole: 3+3, or 2+2+2, or one full-width field.
+ */
+const FIELD_LAYOUT: Record<string, { name: string; width: 'full' | 'half' | 'third' }[]> = {
+  'form-employment': [
+    { name: 'branch', width: 'full' },
+    { name: 'firstname', width: 'half' },
+    { name: 'lastname', width: 'half' },
+    { name: 'email', width: 'half' },
+    { name: 'phone', width: 'half' },
+    { name: 'homephone', width: 'half' },
+    { name: 'position', width: 'half' },
+    { name: 'city', width: 'third' },
+    { name: 'state', width: 'third' },
+    { name: 'zip', width: 'third' },
+    { name: 'haveExperience', width: 'full' },
+    { name: 'upload', width: 'full' },
+    { name: 'message', width: 'full' },
+  ],
+};
+
+async function setFieldWidths(write: boolean) {
+  for (const [id, layout] of Object.entries(FIELD_LAYOUT)) {
+    const form = await client.fetch<{ fields?: any[] }>(`*[_id == $id][0]{ fields }`, { id });
+    if (!form?.fields?.length) { console.log(`  ${id}: no fields`); continue; }
+
+    const byName = new Map(form.fields.map((f) => [f.name, f]));
+    const ordered = [
+      ...layout.filter((l) => byName.has(l.name)).map((l) => ({ ...byName.get(l.name)!, width: l.width })),
+      // A field added in the Studio keeps its place at the end rather than
+      // being dropped by a layout that predates it.
+      ...form.fields.filter((f) => !layout.some((l) => l.name === f.name)),
+    ];
+
+    const before = form.fields.map((f) => `${f.name}:${f.width ?? '-'}`).join(',');
+    const after = ordered.map((f) => `${f.name}:${f.width ?? '-'}`).join(',');
+    if (before === after) { console.log(`  ${id}: layout already correct`); continue; }
+
+    console.log(`  ${id}: ${ordered.filter((f) => f.width !== 'full').length} fields share rows`);
+    if (write) await client.patch(id).set({ fields: ordered }).commit();
+  }
+}
+
 async function addFooterLinks(write: boolean) {
   const social = {
     _id: 'socialLinks',
@@ -273,6 +325,7 @@ async function main() {
   await reorderSections(WRITE);
   await backfillServiceSummaries(WRITE);
   await addFooterLinks(WRITE);
+  await setFieldWidths(WRITE);
   await foldContactIntro(WRITE);
   await addContactMap(WRITE);
 
