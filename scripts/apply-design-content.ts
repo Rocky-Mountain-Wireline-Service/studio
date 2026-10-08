@@ -74,6 +74,13 @@ const PATCHES: Patch[] = [
     },
   },
   {
+    id: 'siteSettings',
+    label: 'Footer credit',
+    // The field holds the whole phrase, not just the name, so the lead-in is
+    // content the migration needed to carry.
+    set: { developerCredit: 'Crafted by Phifer Web Solutions' },
+  },
+  {
     id: 'page-home',
     label: 'Homepage content layout',
     // These entries carry several paragraphs each; alternating rows is the live

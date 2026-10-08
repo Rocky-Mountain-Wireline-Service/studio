@@ -82,7 +82,7 @@ export default defineType({
     defineField({
       name: 'developerCredit',
       title: 'Credit text',
-      description: 'e.g. "Designed & developed by Phifer Web Solutions"',
+      description: 'The whole line, lead-in included — e.g. "Crafted by Phifer Web Solutions"',
       type: 'string',
       group: 'credit',
     }),
