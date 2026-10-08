@@ -24,6 +24,19 @@ interface Patch {
   set: Record<string, unknown>;
 }
 
+const CONTACT_SALES = { _type: 'link', label: 'Contact Sales', href: '/contact#contact-form' };
+
+/** One paragraph of Portable Text, keyed so re-running writes the same value. */
+const heroIntro = (text: string) => [
+  {
+    _type: 'block',
+    _key: 'tagline',
+    style: 'normal',
+    markDefs: [],
+    children: [{ _type: 'span', _key: 'tagline-text', text, marks: [] }],
+  },
+];
+
 const PATCHES: Patch[] = [
   {
     id: 'page-home',
@@ -67,6 +80,37 @@ const PATCHES: Patch[] = [
     // site's layout for them and the only one that gives the copy a readable
     // measure.
     set: { 'sections[_key=="cards"].layout': 'rows' },
+  },
+  // The interior heroes' taglines and buttons were hardcoded in the Gatsby
+  // markup, so the migration had nothing to carry across and these pages opened
+  // on a bare title. The wording is the live site's; the button follows the
+  // header's "Contact Sales" and lands on the form itself.
+  ...Object.entries({
+    'page-about': 'Providing quality service since 1988. Rivaled by no other competitor.',
+    'page-equipment': 'Over 30 specialized equipment for fast, efficient and reliable service.',
+    'page-safety':
+      'Committed to safety both off and on the work site providing safe and efficient wire line services and products.',
+  }).map(([id, tagline]) => ({
+    id,
+    label: 'Hero tagline and button',
+    set: {
+      'sections[_key=="hero"].intro': heroIntro(tagline),
+      'sections[_key=="hero"].cta': CONTACT_SALES,
+      ...(id === 'page-safety'
+        ? {
+            'sections[_key=="hero"].secondaryCta': {
+              _type: 'link',
+              label: 'Work With Us',
+              href: '/employment',
+            },
+          }
+        : {}),
+    },
+  })),
+  {
+    id: 'page-employment',
+    label: 'Hero tagline',
+    set: { 'sections[_key=="hero"].intro': heroIntro('Work with the best.') },
   },
 ];
 
