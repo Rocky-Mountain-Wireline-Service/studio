@@ -23,7 +23,7 @@ export default defineType({
       name: 'tone',
       title: 'Appearance',
       description:
-        'Brand suits a short, high-intent form like a sales enquiry, where the colour carries weight. Light suits a long one like a job application, where a calmer ground is easier to work through.',
+        'Brand suits a short, high-intent form like a sales inquiry, where the color carries weight. Light suits a long one like a job application, where a calmer ground is easier to work through.',
       type: 'string',
       options: {
         list: [

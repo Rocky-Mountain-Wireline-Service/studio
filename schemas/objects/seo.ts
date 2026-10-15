@@ -26,7 +26,7 @@ export default defineType({
       name: 'description',
       title: 'Search Result Description',
       description:
-        'The grey summary text under the headline in Google. Aim for 120-155 characters.',
+        'The gray summary text under the headline in Google. Aim for 120-155 characters.',
       type: 'text',
       rows: 3,
       validation: (Rule) =>

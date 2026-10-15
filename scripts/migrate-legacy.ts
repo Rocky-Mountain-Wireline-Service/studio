@@ -94,7 +94,7 @@ const links = (prefix: string, items: { pagename?: string; pagelink?: string }[]
  * Cut on a sentence boundary where there is one in range, otherwise on a word
  * boundary — never mid-word.
  */
-function summarise(blocks: Block[] | undefined, limit = 170): string | undefined {
+function summarize(blocks: Block[] | undefined, limit = 170): string | undefined {
   if (!Array.isArray(blocks)) return undefined;
   const text = blocks
     .filter((b: any) => b._type === 'block')
@@ -312,7 +312,7 @@ function buildServicePage(src: Doc): Doc {
     title: src.title,
     slug: src.slug,
     image: figure(src.image, src.headeralt, `service ${src.slug.current}`),
-    summary: summarise(src.content),
+    summary: summarize(src.content),
     content: hasBlocks(src.content) ? src.content : undefined,
   });
 }

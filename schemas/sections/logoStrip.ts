@@ -30,7 +30,7 @@ export default defineType({
           fields: [
             defineField({
               name: 'name',
-              title: 'Organisation name',
+              title: 'Organization name',
               description: 'Used as the alt text and as the link title.',
               type: 'string',
               validation: (Rule) => Rule.required(),

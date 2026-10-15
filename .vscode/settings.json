@@ -1,6 +1,6 @@
 {
   // RMWS brand chrome. The shared red title bar marks these three windows as
-  // one project; the status bar colour says which repo you are in, so a command
+  // one project; the status bar color says which repo you are in, so a command
   // is never run against the wrong one.
   //
   // Foregrounds are chosen for contrast, not for brand fidelity: white on the

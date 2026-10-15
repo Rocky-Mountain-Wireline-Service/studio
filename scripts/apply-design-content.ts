@@ -56,7 +56,7 @@ const PATCHES: Patch[] = [
     id: 'page-employment',
     label: 'Application form appearance',
     // A thirteen-field application is a task to work through rather than a
-    // moment to convert, so it takes the light card. The short sales enquiry
+    // moment to convert, so it takes the light card. The short sales inquiry
     // keeps the brand red.
     set: { 'sections[_key=="form"].tone': 'light' },
   },
@@ -157,7 +157,7 @@ async function backfillServiceSummaries(write: boolean) {
       .join(' ')
       .replace(/\s+/g, ' ')
       .trim();
-    if (!text) { console.log(`  ${svc._id} has no body copy to summarise`); continue; }
+    if (!text) { console.log(`  ${svc._id} has no body copy to summarize`); continue; }
 
     let summary = text;
     if (text.length > 170) {
