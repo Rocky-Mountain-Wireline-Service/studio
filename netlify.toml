@@ -1,0 +1,33 @@
+# Sanity Studio, served at studio.rmws.com.
+#
+# Netlify environment variables (read at build time):
+#   SANITY_STUDIO_PROJECT_ID = 29kbekqj
+#   SANITY_STUDIO_DATASET    = staging   (until staging is copied to production)
+
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# The editing tool is private: never indexed, never framed by another site.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The Studio routes in the browser; every path loads the same app.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
