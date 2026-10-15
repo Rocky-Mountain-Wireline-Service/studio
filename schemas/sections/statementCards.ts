@@ -1,4 +1,6 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineFlag } from 'react-icons/md';
+import { richText } from '../lib/editing';
 
 /**
  * Icon + heading + statement cards.
@@ -12,6 +14,7 @@ export default defineType({
   name: 'statementCards',
   title: 'Statement Cards',
   type: 'object',
+  icon: MdOutlineFlag,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({
@@ -34,7 +37,7 @@ export default defineType({
               name: 'statement',
               title: 'Statement',
               type: 'array',
-              of: [{ type: 'block' }],
+              of: richText({ headings: false }),
               validation: (Rule) => Rule.required(),
             }),
             defineField({ name: 'icon', title: 'Icon', type: 'figure' }),

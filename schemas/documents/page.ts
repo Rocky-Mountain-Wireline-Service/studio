@@ -1,6 +1,7 @@
 import { defineType, defineField } from 'sanity';
 import { HiDocumentText } from 'react-icons/hi2';
 import { sectionMembers } from '../sections';
+import { adminOnlyEdit } from '../lib/editing';
 
 /**
  * Any composed page: Home, About, Services, Equipment, Safety, Employment,
@@ -30,7 +31,9 @@ export default defineType({
     defineField({
       name: 'slug',
       title: 'URL path',
-      description: 'The homepage is "/". Others are "/about", "/services" and so on.',
+      description:
+        'Set by the web team. Each page has a fixed address the site is built around, so this cannot be changed here.',
+      readOnly: adminOnlyEdit,
       type: 'slug',
       group: 'content',
       options: {
@@ -63,12 +66,14 @@ export default defineType({
     defineField({ name: 'seo', title: 'Search & Social', type: 'seo', group: 'seo' }),
   ],
   preview: {
-    select: { title: 'title', slug: 'slug.current', sections: 'sections' },
-    prepare({ title, slug, sections }: any) {
+    // The page's hero photograph as its thumbnail: the list is scanned by eye.
+    select: { title: 'title', slug: 'slug.current', sections: 'sections', media: 'sections.0.image' },
+    prepare({ title, slug, sections, media }: any) {
       const count = sections?.length ?? 0;
       return {
         title: title || 'Untitled',
         subtitle: `${slug || '—'} · ${count} section${count === 1 ? '' : 's'}`,
+        media,
       };
     },
   },

@@ -1,4 +1,6 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineDynamicForm } from 'react-icons/md';
+import { richText } from '../lib/editing';
 
 /**
  * Drops a form defined in "Forms" onto a page.
@@ -11,13 +13,14 @@ export default defineType({
   name: 'formSection',
   title: 'Form',
   type: 'object',
+  icon: MdOutlineDynamicForm,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({
       name: 'intro',
       title: 'Intro copy',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: richText({ headings: false }),
     }),
     defineField({
       name: 'tone',

@@ -1,4 +1,6 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineGridView } from 'react-icons/md';
+import { richText } from '../lib/editing';
 
 /**
  * The services index. References `servicePage` documents rather than copying
@@ -13,13 +15,14 @@ export default defineType({
   name: 'servicesGrid',
   title: 'Services Grid',
   type: 'object',
+  icon: MdOutlineGridView,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({
       name: 'intro',
       title: 'Intro copy',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: richText({ headings: false }),
     }),
     defineField({
       name: 'services',

@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineMap } from 'react-icons/md';
 
 /**
  * Hosts whose embeds may be framed.
@@ -20,6 +21,7 @@ export default defineType({
   name: 'mapEmbed',
   title: 'Map',
   type: 'object',
+  icon: MdOutlineMap,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({

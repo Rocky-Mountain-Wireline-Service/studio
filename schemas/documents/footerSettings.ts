@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { richText } from '../lib/editing';
 import { MdOutlineWebAsset } from 'react-icons/md';
 
 /**
@@ -19,7 +20,7 @@ export default defineType({
       title: 'Mission blurb',
       description: 'Short paragraph shown beside the footer logo.',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: richText({ headings: false }),
     }),
     defineField({
       name: 'linksHeading',

@@ -1,4 +1,6 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineViewAgenda } from 'react-icons/md';
+import { richText } from '../lib/editing';
 
 /**
  * Grid of image cards pointing anywhere on the site — the homepage's four-up
@@ -13,6 +15,7 @@ export default defineType({
   name: 'linkCardGrid',
   title: 'Content Rows',
   type: 'object',
+  icon: MdOutlineViewAgenda,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({
@@ -49,7 +52,7 @@ export default defineType({
               name: 'body',
               title: 'Card copy',
               type: 'array',
-              of: [{ type: 'block' }],
+              of: richText(),
             }),
             defineField({ name: 'image', title: 'Card image', type: 'figure' }),
             defineField({

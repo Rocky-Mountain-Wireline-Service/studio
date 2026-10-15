@@ -1,5 +1,7 @@
 import { defineType, defineField } from 'sanity';
+import { richText } from '../lib/editing';
 import { RiPagesLine } from 'react-icons/ri';
+import { adminOnlyEdit } from '../lib/editing';
 
 /**
  * One wireline service, rendered at /services/<slug>.
@@ -28,7 +30,9 @@ export default defineType({
     defineField({
       name: 'slug',
       title: 'URL slug',
-      description: 'The part after /services/. Changing this breaks existing links.',
+      description:
+        'The part after /services/. Set when the service is created; only the web team can change it, because changing it breaks links people and search engines already have.',
+      readOnly: ({ document, currentUser }) => Boolean((document as any)?._createdAt && (document as any)?.slug?.current) && adminOnlyEdit({ currentUser }),
       type: 'slug',
       group: 'content',
       options: { source: 'title', maxLength: 96 },
@@ -53,7 +57,7 @@ export default defineType({
       name: 'content',
       title: 'Body copy',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: richText(),
       group: 'content',
     }),
     defineField({ name: 'seo', title: 'Search & Social', type: 'seo', group: 'seo' }),

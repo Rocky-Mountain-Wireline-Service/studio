@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlinePeople } from 'react-icons/md';
 
 /**
  * Department heads and branch contacts.
@@ -12,6 +13,7 @@ export default defineType({
   name: 'staffDirectory',
   title: 'Staff Directory',
   type: 'object',
+  icon: MdOutlinePeople,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({

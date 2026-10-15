@@ -1,5 +1,6 @@
 import { defineType, defineField } from 'sanity';
 import { MdMenu } from 'react-icons/md';
+import { adminOnlyEdit } from '../lib/editing';
 
 /**
  * A named set of links. `navType` is what the frontend keys on to decide where
@@ -17,6 +18,7 @@ export default defineType({
       name: 'navType',
       title: 'Where this menu appears',
       type: 'string',
+      readOnly: adminOnlyEdit,
       options: {
         list: [
           { title: 'Main header', value: 'main' },
@@ -30,6 +32,7 @@ export default defineType({
     defineField({
       name: 'items',
       title: 'Links',
+      description: 'Drag to reorder. Each link needs its text and where it goes, such as /about.',
       type: 'array',
       of: [{ type: 'link' }],
       validation: (Rule) => Rule.required().min(1),

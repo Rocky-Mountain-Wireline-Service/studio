@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineVerified } from 'react-icons/md';
 
 /**
  * Accreditation / partner logo row — the Equipment page's "Trusted By"
@@ -12,6 +13,7 @@ export default defineType({
   name: 'logoStrip',
   title: 'Logo Strip',
   type: 'object',
+  icon: MdOutlineVerified,
   fields: [
     defineField({
       name: 'heading',

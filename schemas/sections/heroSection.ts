@@ -1,4 +1,6 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineViewDay } from 'react-icons/md';
+import { richText } from '../lib/editing';
 
 /**
  * Full-bleed page header. Every legacy page document carried the same
@@ -8,6 +10,7 @@ export default defineType({
   name: 'heroSection',
   title: 'Hero',
   type: 'object',
+  icon: MdOutlineViewDay,
   fields: [
     defineField({
       name: 'heading',
@@ -20,7 +23,7 @@ export default defineType({
       title: 'Intro copy',
       description: 'Optional paragraph shown beneath the headline.',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: richText({ headings: false }),
     }),
     defineField({
       name: 'image',

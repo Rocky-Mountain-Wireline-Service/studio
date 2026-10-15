@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlineContactPhone } from 'react-icons/md';
 
 /**
  * Small icon + label + value cards — phone, email, address.
@@ -11,6 +12,7 @@ export default defineType({
   name: 'contactCards',
   title: 'Contact Cards',
   type: 'object',
+  icon: MdOutlineContactPhone,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({

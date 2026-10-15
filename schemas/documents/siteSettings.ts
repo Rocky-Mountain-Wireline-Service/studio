@@ -1,5 +1,6 @@
 import { defineType, defineField } from 'sanity';
 import { IoSettingsSharp } from 'react-icons/io5';
+import { adminOnlyView } from '../lib/editing';
 
 /**
  * Site-wide identity: logos, business name, default social image, developer
@@ -14,7 +15,7 @@ export default defineType({
     { name: 'identity', title: 'Identity', default: true },
     { name: 'logos', title: 'Logos' },
     { name: 'seo', title: 'Search defaults' },
-    { name: 'credit', title: 'Footer credit' },
+    { name: 'credit', title: 'Footer credit', hidden: adminOnlyView },
   ],
   fields: [
     defineField({

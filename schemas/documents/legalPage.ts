@@ -1,5 +1,7 @@
 import { defineType, defineField } from 'sanity';
+import { richText } from '../lib/editing';
 import { HiScale } from 'react-icons/hi2';
+import { adminOnlyEdit } from '../lib/editing';
 
 /**
  * Privacy Policy, Terms & Conditions, and any other legal copy.
@@ -30,6 +32,8 @@ export default defineType({
       title: 'URL path',
       type: 'slug',
       group: 'content',
+      description: 'Set by the web team. Search engines and other sites link to this address.',
+      readOnly: adminOnlyEdit,
       options: { source: 'title', maxLength: 96 },
       validation: (Rule) => Rule.required(),
     }),
@@ -44,7 +48,7 @@ export default defineType({
       name: 'body',
       title: 'Body',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: richText(),
       group: 'content',
       validation: (Rule) => Rule.required(),
     }),

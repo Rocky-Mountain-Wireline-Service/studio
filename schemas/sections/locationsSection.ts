@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { MdOutlinePlace } from 'react-icons/md';
 
 /**
  * Branch locations with phone numbers. Feeds both the on-page list and the
@@ -10,6 +11,7 @@ export default defineType({
   name: 'locationsSection',
   title: 'Locations',
   type: 'object',
+  icon: MdOutlinePlace,
   fields: [
     defineField({ name: 'heading', title: 'Section heading', type: 'string' }),
     defineField({
