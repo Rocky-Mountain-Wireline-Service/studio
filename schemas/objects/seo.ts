@@ -18,7 +18,7 @@ export default defineType({
       name: 'title',
       title: 'Search Result Title',
       description:
-        'Shown as the clickable headline in Google. Leave blank to use the page title. "- Rocky Mountain Wireline Service" is appended automatically.',
+        'Shown as the clickable headline in Google. Lead with the words people search for. Leave blank to use the page title. "- Rocky Mountain Wireline Service" is added automatically, or "| RMWS" when the full name would make the title too long for Google.',
       type: 'string',
       validation: (Rule) => Rule.max(60).warning('Google truncates past roughly 60 characters.'),
     }),
