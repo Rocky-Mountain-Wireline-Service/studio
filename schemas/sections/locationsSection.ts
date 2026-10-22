@@ -48,11 +48,18 @@ export default defineType({
               type: 'string',
             }),
             defineField({ name: 'postalCode', title: 'ZIP code', type: 'string' }),
+            defineField({
+              name: 'contact',
+              title: 'Contact person',
+              description:
+                'Optional. Shown under the branch name. If the same name appears in the Contact page\'s staff directory, it links to their card there.',
+              type: 'string',
+            }),
           ],
           preview: {
-            select: { city: 'city', state: 'state', phone: 'phone' },
-            prepare({ city, state, phone }: any) {
-              return { title: [city, state].filter(Boolean).join(', '), subtitle: phone };
+            select: { city: 'city', state: 'state', phone: 'phone', contact: 'contact' },
+            prepare({ city, state, phone, contact }: any) {
+              return { title: [city, state].filter(Boolean).join(', '), subtitle: [contact, phone].filter(Boolean).join(' · ') };
             },
           },
         },
