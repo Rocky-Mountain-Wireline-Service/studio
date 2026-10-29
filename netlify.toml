@@ -10,6 +10,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # The Studio build peaks near 3 GB; Node's default heap limit is about 2 GB.
+  NODE_OPTIONS = "--max-old-space-size=4096"
 
 # The editing tool is private: never indexed, never framed by another site.
 [[headers]]
