@@ -2,7 +2,7 @@
 #
 # Netlify environment variables (read at build time):
 #   SANITY_STUDIO_PROJECT_ID = 29kbekqj
-#   SANITY_STUDIO_DATASET    = staging   (until staging is copied to production)
+#   SANITY_STUDIO_DATASET    = production   (staging is for testing changes first)
 
 [build]
   command = "pnpm build"
