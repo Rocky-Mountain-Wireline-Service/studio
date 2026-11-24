@@ -156,10 +156,16 @@ export default defineType({
       name: 'notifyEmail',
       title: 'Send submissions to',
       description:
-        'The email address that receives each submission. Every submission is also kept in the dashboard under Form Submissions.',
+        'The email addresses that receive each submission, separated by commas. Every submission is also kept in the dashboard under Form Submissions.',
       type: 'string',
       validation: (Rule) =>
-        Rule.regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { name: 'email address' }).error('Enter one email address.'),
+        Rule.custom((value?: string) => {
+          if (!value?.trim()) return true;
+          const addresses = value.split(/[,;\s]+/).filter(Boolean);
+          const bad = addresses.filter((a) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a));
+          if (bad.length) return `Not an email address: ${bad.join(', ')}`;
+          return addresses.length <= 10 || 'Up to 10 addresses.';
+        }),
     }),
   ],
   preview: {
